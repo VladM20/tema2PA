@@ -1,6 +1,5 @@
 #include "definitii.h"
 
-#define NR_ECHIPE 32
 
 int allocWorked(void *pointer,char *function)
 {
@@ -92,6 +91,27 @@ void writeMatrix(FILE *output,int matrix[NR_ECHIPE][NR_ECHIPE])
     }
 }
 
+float power(float x,int y)
+{
+    if(y==0)
+        return 1;
+    while(y)
+    {
+        x=x*x;
+        y--;
+    }
+    return x;
+}
+
+double computePrestige(Team *team)
+{
+    if(team==NULL)
+        return -1;
+    int l=5;
+    double p=(Q_CONST*pow((2-Q_CONST),team->wins))/((1<<l)+(pow((2-Q_CONST),l))*(Q_CONST-1));
+    return p;
+}
+
 void printTeams(Queue *q)
 {
     Node *temp=q->front;
@@ -130,5 +150,13 @@ int main(int argc,char* argv[])
         remainingTeams/=2;
     }
     writeMatrix(outputGraf,matrix);
+    fclose(outputGraf);
+    enQueue(losers,deQueue(winners));       //Muta echipa castigatoare in aceeasi coada cu restul.
+    printTeams(losers);
+    FILE *outputScor=fopen(argv[3],"wt");
+    WritePrestiges(outputScor,losers);
+    fclose(outputScor);
+    deleteQueue(&winners);
+    deleteQueue(&losers);
     return 0;
 }

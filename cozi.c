@@ -89,3 +89,32 @@ Team *deQueue(Queue *q)
     free(temp);
     return newTeam;
 }
+
+void deleteQueue(Queue **q)
+{
+    if(*q==NULL)
+        return;
+    
+    Node *nextNode;
+    while(!isEmpty(*q))
+    {
+        nextNode=(*q)->front->next;
+        freeTeam((*q)->front->team);
+        free((*q)->front);
+        (*q)->front=nextNode;
+    }
+    free(*q);
+    *q=NULL;
+}
+
+void WritePrestiges(FILE *output,Queue *q)
+{
+    if(q==NULL)
+        return;
+    Node *current=q->front;
+    while(current!=NULL)
+    {
+        fprintf(output,"%.4f %s\n",computePrestige(current->team),current->team->name);
+        current=current->next;
+    }
+}
