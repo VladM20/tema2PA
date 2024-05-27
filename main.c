@@ -38,7 +38,7 @@ Team *readTeam(FILE *input,int position)
     return newTeam;
 }
 
-void playMatch(Team *team1,Team *team2,Queue *winners,Queue *losers)
+void playMatch(Team *team1,Team *team2,Queue *winners,Queue *losers, int matrix[NR_ECHIPE][NR_ECHIPE])
 {
     if(team1==NULL || team2==NULL || winners==NULL || losers==NULL || team1->name==NULL || team2->name==NULL)
     {
@@ -48,41 +48,74 @@ void playMatch(Team *team1,Team *team2,Queue *winners,Queue *losers)
     if(team1->points==team2->points)
     {
         int deciding=strcmp(team1->name,team2->name);
-        if(deciding<0)
+        if(deciding<0)      //castiga team1
         {
+            team1->wins++;
             enQueue(winners,team1);
             enQueue(losers,team2);
+            matrix[team2->position][team1->position]=1;
         }
-        if(deciding>0)
+        if(deciding>0)      //castiga team2
         {
+            team2->wins++;
             enQueue(winners,team2);
             enQueue(losers,team1);
+            matrix[team1->position][team2->position]=1;
         }
+        return;
     }
-    if(team1->points<team2->points)
+    if(team1->points<team2->points)     //castiga team2
     {
+        team2->wins++;
         enQueue(winners,team2);
         enQueue(losers,team1);
+        matrix[team1->position][team2->position]=1;
+        return;
     }
-    if(team1->points>team2->points)
+    if(team1->points>team2->points)     //castiga team1
     {
-        enQueue(winners,team2);
-        enQueue(losers,team1);
+        team1->wins++;
+        enQueue(winners,team1);
+        enQueue(losers,team2);
+        matrix[team2->position][team1->position]=1;
+        return;
+    }
+}
+
+void writeMatrix(FILE *output,int matrix[NR_ECHIPE][NR_ECHIPE])
+{
+    for(int i=0;i<NR_ECHIPE;i++)
+    {
+        for(int j=0;j<NR_ECHIPE;j++)
+            fprintf(output,"%d ",matrix[i][j]);
+        fprintf(output,"\n");
+    }
+}
+
+void printTeams(Queue *q)
+{
+    Node *temp=q->front;
+    for(int j=0;temp!=NULL;j++)
+    {
+        printf("%s (%.2f)\n",temp->team->name,temp->team->points);
+        temp=temp->next;
     }
 }
 
 int main(int argc,char* argv[])
 {
+    int matrix[NR_ECHIPE][NR_ECHIPE]={0};
     FILE *input=fopen(argv[1],"rt");
     Queue *winners=createQueue(),*losers=createQueue();
-    for(int i=1;i<=NR_ECHIPE;i+=2)  //Citire din fisier + Prima runda
+    for(int i=0;i<NR_ECHIPE;i+=2)  //Citire din fisier + Prima runda
     {
         Team *team1=readTeam(input,i);
         Team *team2=readTeam(input,i+1);
-        playMatch(team1,team2,winners,losers);
+        playMatch(team1,team2,winners,losers,matrix);
     }
     fclose(input);
 
+    FILE *outputGraf=fopen(argv[2],"wt");
     int remainingTeams=NR_ECHIPE/2;
     while(remainingTeams>1)
     {
@@ -92,10 +125,10 @@ int main(int argc,char* argv[])
             Team *team2=deQueue(winners);
             if(team1==NULL || team2==NULL)
                 break;
-            playMatch(team1,team2,winners,losers);
+            playMatch(team1,team2,winners,losers,matrix);
         }
         remainingTeams/=2;
     }
-    printf("Castigatorul: %s\n",winners->front->team->name);
+    writeMatrix(outputGraf,matrix);
     return 0;
 }

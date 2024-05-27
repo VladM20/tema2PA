@@ -1,4 +1,4 @@
-number=7
+number=2
 
 all: build
 build:
