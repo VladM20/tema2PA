@@ -48,14 +48,14 @@ void playMatch(Team *team1,Team *team2,Queue *winners,Queue *losers, int matrix[
     if(team1->points==team2->points)
     {
         int deciding=strcmp(team1->name,team2->name);
-        if(deciding<0)      //castiga team1
+        if(deciding>0)      //castiga team1
         {
             team1->wins++;
             enQueue(winners,team1);
             enQueue(losers,team2);
             matrix[team2->position][team1->position]=1;
         }
-        if(deciding>0)      //castiga team2
+        if(deciding<0)      //castiga team2
         {
             team2->wins++;
             enQueue(winners,team2);
