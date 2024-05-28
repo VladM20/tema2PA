@@ -5,29 +5,6 @@ int isEmpty(Queue *q)
     return q->front==NULL;
 }
 
-void freeTeam(Team *team)
-{
-    if(team==NULL)
-        return;
-    if(team->name!=NULL)
-        free(team->name);
-    free(team);
-}
-
-void copyTeam(Team *source,Team *destination)
-{
-    if(source==NULL || destination==NULL)
-        return;
-
-    destination->name=(char*)malloc((strlen(source->name)+1)*sizeof(char));
-    if(!allocWorked(destination->name,"copyTeam(destination->name)"))
-        return;
-    strcpy(destination->name,source->name);
-    destination->wins=source->wins;
-    destination->points=source->points;
-    destination->position=source->position;
-}
-
 Queue *createQueue()
 {
     Queue *q=(Queue*)malloc(sizeof(Queue));
@@ -105,16 +82,4 @@ void deleteQueue(Queue **q)
     }
     free(*q);
     *q=NULL;
-}
-
-void WritePrestiges(FILE *output,Queue *q)
-{
-    if(q==NULL)
-        return;
-    Node *current=q->front;
-    while(current!=NULL)
-    {
-        fprintf(output,"%.4f %s\n",computePrestige(current->team),current->team->name);
-        current=current->next;
-    }
 }

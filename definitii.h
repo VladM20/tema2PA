@@ -26,20 +26,34 @@ typedef struct Queue
     Node *front,*rear;
 } Queue;
 
+//teams.c
+
 //Verifica alocarea dinamica a POINTER.
 int allocWorked(void *pointer,char *function);
+//Verifica daca fisierul FILE s-a deschis.
+int verifyFile(FILE *file,char *fileName);
 //Sterge ' ','\n','\r', daca sunt, din NAME.
 void truncateWhiteSpace(char *name);
 //Citeste o echipa din INPUT si returneaza un pointer catre aceasta.
 Team *readTeam(FILE *input,int position);
+//Copiaza, cu alocare dinamica, echipa SOURCE in echipa DESTINATION.
+void copyTeam(Team *source,Team *destination);
+//Elibereaza memoria alocata pentru TEAM.
+void freeTeam(Team *team);
 //Simuleaza un meci, pune echipele in coada corespunzatoare si scrie rezultatul pe matrice.
-void playMatch(Team *team1,Team *team2,Queue *winners,Queue *losers, int matrix[NR_ECHIPE][NR_ECHIPE]);
+void playMatch(Team *team1,Team *team2,Queue *winners,Queue *losers, int **matrix);
+//Creaza o matrice patratica alocata dinamic de SIZE linii si SIZE coloane.
+int **createMatrix(int size);
 //Scrie in fisierul OUTPUT matricea MATRIX.
-void writeMatrix(FILE *output,int matrix[NR_ECHIPE][NR_ECHIPE]);
+void writeMatrix(FILE *output,int **matrix);
+//Elibereaza memoria utilizata MATRIX.
+void freeMatrix(int **matrix,int size);
 //Calculeaza si returneaza prestigiul unei echipe.
 double computePrestige(Team *team);
-// Printeaza pe ecran echipele din Q.
-void printTeams(Queue *q);
+//Scrie prestigiul si numele echipelor din Q in fisierul OUTPUT.
+void WritePrestiges(FILE *output,Queue *q);
+
+//cozi.c
 
 // Verifica daca coada este goala.
 int isEmpty(Queue *q);
@@ -51,5 +65,3 @@ void enQueue(Queue *q,Team *team);
 Team *deQueue(Queue *q);
 //Sterge coada Q.
 void deleteQueue(Queue **q);
-//Scrie prestigiul si numele echipelor din Q in fisierul OUTPUT.
-void WritePrestiges(FILE *output,Queue *q);

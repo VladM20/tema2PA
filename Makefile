@@ -2,7 +2,7 @@ number=1
 
 all: build
 build:
-	gcc -g main.c cozi.c -o clasament -lm -Wall
+	gcc -g main.c cozi.c teams.c -o clasament -lm -Wall
 run:
 	./clasament Input/test$(number).in testGraf.out testScor.out
 clean:
